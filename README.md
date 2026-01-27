@@ -2,7 +2,6 @@
 
 **A single-file, zero-dependency tool for visualizing IEEE 754 binary representation of floats and doubles.**
 
----
 
 ## What This Is
 
@@ -10,7 +9,7 @@ A diagnostic tool that exposes the **exact bit-level representation** of IEEE 75
 
 **Target audience:** Systems engineers, quantitative developers, embedded programmers, and anyone debugging floating-point precision issues in production systems.
 
----
+
 
 ## Why This Exists
 
@@ -99,19 +98,6 @@ static uint32_t float_to_u32(float f) {
     memcpy(&u, &f, sizeof u);  // Standards-compliant
     return u;
 }
-```
-
-**Why `memcpy` instead of `*(uint32_t*)&f`?**
-
-The cast approach violates **strict aliasing rules** (C99 §6.5/7) and is undefined behavior. Modern compilers with `-O2` may optimize it into incorrect code.
-
-The `memcpy` approach:
-- ✓ Is guaranteed by C99/C11 to work correctly
-- ✓ Optimizes to zero cost (compilers recognize the pattern)
-- ✓ Passes `-Wstrict-aliasing` warnings
-- ✓ Handles endianness automatically
-
-### Bit Extraction
 
 ```c
 uint32_t sign = (u >> 31) & 1u;        // Bit 31
@@ -175,28 +161,6 @@ decode_float(FLT_MIN);           // Smallest normalized
 decode_float(FLT_MAX);           // Largest finite
 ```
 
----
-
-## Known Limitations
-
-### Platform Requirements
-- Assumes IEEE 754 compliance (standard since C99 Annex F)
-- Requires 8-bit bytes (`CHAR_BIT == 8`)
-- Assumes two's complement integers (C99 requirement)
-
-**Non-compliant platforms:** Some embedded systems, historical VAX, IBM mainframes (pre-z/Architecture).
-
-### Rounding Modes
-Reports current representation but does not control rounding mode. Results may vary if `fesetround()` is used.
-
-### x87 vs SSE
-On x86/x64:
-- **x87 FPU:** Uses 80-bit precision internally (different rounding)
-- **SSE/AVX:** True IEEE 754 binary32/binary64
-
-**Recommendation:** Compile with `-mfpmath=sse` for deterministic results.
-
----
 
 ## Financial Computing Implications
 
@@ -260,44 +224,6 @@ Tested on:
 - **Clang** 10.0+, 14.0+, 16.0+
 Other compilers would "probably" work too.
 
-**Verified with:**
-```bash
--Wall -Wextra -Werror -pedantic -std=c99
--O0 -O1 -O2 -O3 -Os
--fsanitize=undefined -fsanitize=address
-```
-
----
-
-## When to Use This Tool
-
-### During Development
-- Understanding why `float` equality checks fail
-- Debugging precision loss in iterative algorithms
-- Verifying cross-platform consistency
-- Investigating denormalized number behavior
-
-### In Production Debugging
-- Diagnosing non-reproducible calculation results
-- Investigating financial discrepancies
-- Analyzing accumulated rounding errors
-- Documenting precision limitations for audits
-
-### In Interviews
-When asked "Explain IEEE 754" or "Why does `0.1 + 0.2 != 0.3`?", **show them the bits.**
-
----
-
-## What This Tool Is NOT
-
-- A floating-point math library
-- An arbitrary-precision calculator
-- A replacement for proper numerical analysis
-- A solution to floating-point problems
-
-**This tool is a diagnostic instrument.** It helps you understand the problem. Fixing it requires proper algorithm design, numeric libraries, or alternative representations.
-
----
 
 ## Additional Resources
 
@@ -326,22 +252,3 @@ When asked "Explain IEEE 754" or "Why does `0.1 + 0.2 != 0.3`?", **show them the
 MIT License - Use freely, but understand what you're doing.
 
 **Disclaimer:** This tool is provided as-is for educational and diagnostic purposes. The author is not responsible for financial losses, system failures, or incorrect calculations resulting from misuse or misunderstanding of floating-point arithmetic.
-
----
-
-## Final Note
-
-If you're using floating-point arithmetic for anything where precision matters—**money, lives, safety-critical systems**—you need to understand IEEE 754 at the bit level.
-
-This tool exists because people keep making the same mistakes:
-- Comparing floats with `==`
-- Accumulating small values without compensation
-- Assuming decimal fractions are exactly representable
-- Ignoring denormalized numbers
-- Not testing edge cases (±0, ±∞, NaN)
-
-**Don't be that person.**
-
-Run this tool. See the bits. Understand what your hardware is actually doing.
-
-Then design your systems accordingly.
