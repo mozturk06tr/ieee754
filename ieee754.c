@@ -31,7 +31,7 @@ static uint64_t double_to_u64(double d) {
 static void decode_float(float f) {
     uint32_t u = float_to_u32(f);
     uint32_t sign = (u >> 31) & 1u;
-    uint32_t exp  = (u >> 23) & 0xFFu;      // FIXED
+    uint32_t exp  = (u >> 23) & 0xFFu;      
     uint32_t frac = u & 0x7FFFFFu;
     
     printf("float = %.9g\n", f);
@@ -67,4 +67,5 @@ int main(void) {
     puts("----");
     decode_float(-0.0f);
     return 0;
+
 }
