@@ -258,8 +258,7 @@ if (a == b) { /* NEVER TRUE */ }
 Tested on:
 - **GCC** 7.5+, 9.4+, 11.3+, 13.1+
 - **Clang** 10.0+, 14.0+, 16.0+
-- **MSVC** 19.29+ (Visual Studio 2019+)
-- **Intel ICC** 2021.6+
+Other compilers would "probably" work too.
 
 **Verified with:**
 ```bash
