@@ -99,10 +99,11 @@ static uint32_t float_to_u32(float f) {
     return u;
 }
 
-```c
+
 uint32_t sign = (u >> 31) & 1u;        // Bit 31
 uint32_t exp  = (u >> 23) & 0xFFu;     // Bits 30-23
 uint32_t frac = u & 0x7FFFFFu;         // Bits 22-0
+
 ```
 
 Portable shift-and-mask operations. No endianness assumptions, no padding bit access.
