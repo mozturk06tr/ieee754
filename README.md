@@ -58,9 +58,10 @@ fl(a op b) = (a op b) * (1 + delta)
 
 
 Associativity and distributivity do not hold.
-```
+
 Special Values
 e = 0,   f = 0   -> +/-0
 e = max, f = 0   -> +/-inf
 e = max, f != 0  -> NaN
 e = 0,   f != 0  -> subnormal
+```
